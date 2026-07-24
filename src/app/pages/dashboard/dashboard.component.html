@@ -25,7 +25,7 @@
         <div class="card-head"><div><h2>Directorio de pacientes</h2><p>Expedientes administrativos registrados en Supabase</p></div><button (click)="dialog.set('patient')">＋ Nuevo paciente</button></div>
         <div class="empty" *ngIf="!loading() && patients.length === 0"><span>♙</span><strong>Aún no hay pacientes</strong><p>Registra el primer expediente para comenzar.</p><button (click)="dialog.set('patient')">Registrar paciente</button></div>
         <div class="table-wrap" *ngIf="patients.length"><table><thead><tr><th>PACIENTE</th><th>CONTACTO</th><th>NACIMIENTO</th><th>SANGRE</th><th>ESTADO</th><th></th></tr></thead>
-        <tbody><tr *ngFor="let p of patients"><td><div class="patient-cell"><div class="mini">{{initials(p)}}</div><div><strong>{{p.first_name}} {{p.last_name}}</strong><span>#{{p.record_number}} · {{age(p.birth_date)}} años</span></div></div></td><td><span>{{p.phone || 'Sin teléfono'}}</span><br><small>{{p.email || ''}}</small></td><td>{{p.birth_date | date:'dd MMM yyyy'}}</td><td><b class="indicator">{{p.blood_type || '—'}}</b></td><td><span class="program">{{p.status === 'active' ? 'Activo' : 'Inactivo'}}</span></td><td>›</td></tr></tbody></table></div>
+        <tbody><tr *ngFor="let p of patients" (click)="openPatient(p)" [class.clinical-link]="role === 'doctor'"><td><div class="patient-cell"><div class="mini">{{initials(p)}}</div><div><strong>{{p.first_name}} {{p.last_name}}</strong><span>#{{p.record_number}} · {{age(p.birth_date)}} años</span></div></div></td><td><span>{{p.phone || 'Sin teléfono'}}</span><br><small>{{p.email || ''}}</small></td><td>{{p.birth_date | date:'dd MMM yyyy'}}</td><td><b class="indicator">{{p.blood_type || '—'}}</b></td><td><span class="program">{{p.status === 'active' ? 'Activo' : 'Inactivo'}}</span></td><td>{{role === 'doctor' ? '›' : ''}}</td></tr></tbody></table></div>
       </article>
     </div>
     <aside class="right">
@@ -36,3 +36,4 @@
   </div>
 </section>
 <app-clinic-dialog [mode]="dialog()" [patients]="patients" (closed)="closeDialog()" (saved)="onSaved()" />
+<app-medical-record *ngIf="role === 'doctor'" [patient]="selectedPatient()" (closed)="selectedPatient.set(null)" />

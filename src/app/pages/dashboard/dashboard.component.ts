@@ -1,13 +1,14 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ClinicDialogComponent } from '../../components/clinic-dialog/clinic-dialog.component';
+import { MedicalRecordComponent } from '../../components/medical-record/medical-record.component';
 import { ClinicDataService } from '../../services/clinic-data.service';
 import { AppointmentRow, PatientRow } from '../../models/database.models';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, ClinicDialogComponent],
+  imports: [CommonModule, ClinicDialogComponent, MedicalRecordComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
@@ -19,6 +20,7 @@ export class DashboardComponent implements OnInit, OnChanges {
   patients: PatientRow[] = [];
   appointments: AppointmentRow[] = [];
   dialog = signal<'patient' | 'appointment' | null>(null);
+  selectedPatient = signal<PatientRow | null>(null);
   loading = signal(true);
   error = signal('');
 
@@ -57,6 +59,10 @@ export class DashboardComponent implements OnInit, OnChanges {
   closeDialog() {
     this.dialog.set(null);
     this.actionHandled.emit();
+  }
+
+  openPatient(patient: PatientRow) {
+    if (this.role === 'doctor') this.selectedPatient.set(patient);
   }
 
   age(birthDate: string): number {

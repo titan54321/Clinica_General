@@ -1,0 +1,64 @@
+<div class="overlay" *ngIf="patient" (click)="closed.emit()"></div>
+<section class="record" *ngIf="patient">
+  <header>
+    <div class="identity"><div class="avatar">{{patient.first_name[0]}}{{patient.last_name[0]}}</div><div><p>EXPEDIENTE #{{patient.record_number}}</p><h2>{{patient.first_name}} {{patient.last_name}}</h2><span>{{age()}} años · {{patient.blood_type || 'Tipo sanguíneo no registrado'}}</span></div></div>
+    <button class="close" (click)="closed.emit()">×</button>
+  </header>
+  <nav><button [class.active]="tab()==='summary'" (click)="tab.set('summary')">Resumen</button><button [class.active]="tab()==='history'" (click)="tab.set('history')">Historial <b>{{history.length}}</b></button><button class="new-consult" [class.active]="tab()==='consultation'" (click)="tab.set('consultation')">＋ Nueva consulta</button></nav>
+
+  <div class="alert error" *ngIf="error()">{{error()}}</div>
+  <div class="alert success" *ngIf="success()">{{success()}}</div>
+
+  <main *ngIf="tab()==='summary'">
+    <div class="section-title"><div><p>RESUMEN CLÍNICO</p><h3>Información más reciente</h3></div><span *ngIf="loading()">Cargando…</span></div>
+    <div class="vitals-grid">
+      <article><span>PESO</span><strong>{{latestVitals?.weight_kg || '—'}}<small *ngIf="latestVitals?.weight_kg"> kg</small></strong></article>
+      <article><span>ESTATURA</span><strong>{{latestVitals?.height_cm || '—'}}<small *ngIf="latestVitals?.height_cm"> cm</small></strong></article>
+      <article><span>PRESIÓN</span><strong>{{latestVitals?.systolic_pressure || '—'}}<small *ngIf="latestVitals?.systolic_pressure">/{{latestVitals?.diastolic_pressure}}</small></strong></article>
+      <article><span>IMC</span><strong>{{bmi()}}</strong></article>
+    </div>
+    <div class="summary-grid">
+      <article><h4>Última consulta</h4><ng-container *ngIf="history[0]; else noHistory"><strong>{{history[0].consultation_date | date:'dd MMM yyyy'}}</strong><p>{{history[0].reason_for_visit || 'Sin motivo registrado'}}</p></ng-container><ng-template #noHistory><p>No hay consultas registradas.</p></ng-template></article>
+      <article><h4>Diagnóstico reciente</h4><strong *ngIf="history[0]">{{history[0].diagnosis || 'Sin diagnóstico'}}</strong><p *ngIf="history[0]">{{history[0].treatment_plan || 'Sin plan registrado'}}</p><p *ngIf="!history[0]">Se mostrará después de la primera consulta.</p></article>
+      <article><h4>Datos de contacto</h4><strong>{{patient.phone || 'Sin teléfono'}}</strong><p>{{patient.email || 'Sin correo registrado'}}</p></article>
+      <article><h4>Contacto de emergencia</h4><strong>{{patient.emergency_contact_name || 'Sin registrar'}}</strong><p>{{patient.emergency_contact_phone || '—'}}</p></article>
+    </div>
+  </main>
+
+  <main *ngIf="tab()==='history'">
+    <div class="section-title"><div><p>EVOLUCIÓN CLÍNICA</p><h3>Historial de consultas</h3></div><button (click)="tab.set('consultation')">＋ Nueva consulta</button></div>
+    <div class="empty" *ngIf="!history.length"><span>▤</span><strong>Sin consultas registradas</strong><p>Crea la primera nota médica de este paciente.</p></div>
+    <article class="history-item" *ngFor="let item of history">
+      <div class="history-date"><strong>{{item.consultation_date | date:'dd'}}</strong><span>{{item.consultation_date | date:'MMM yyyy'}}</span></div>
+      <div class="history-content"><div class="history-head"><div><h4>{{item.reason_for_visit || 'Consulta médica'}}</h4><span>{{item.consultation_date | date:'HH:mm'}}</span></div><b>Consulta</b></div>
+      <dl><div><dt>Diagnóstico</dt><dd>{{item.diagnosis || 'No registrado'}}</dd></div><div><dt>Tratamiento</dt><dd>{{item.treatment_plan || 'No registrado'}}</dd></div><div *ngIf="item.prescriptions"><dt>Prescripción</dt><dd>{{item.prescriptions}}</dd></div><div *ngIf="item.follow_up_notes"><dt>Seguimiento</dt><dd>{{item.follow_up_notes}}</dd></div></dl></div>
+    </article>
+  </main>
+
+  <main *ngIf="tab()==='consultation'" class="consultation">
+    <div class="section-title"><div><p>NUEVA NOTA MÉDICA</p><h3>Registrar consulta</h3></div><span>Fecha: {{today | date:'dd MMM yyyy'}}</span></div>
+    <form (ngSubmit)="saveConsultation()">
+      <fieldset><legend>Signos vitales</legend><div class="form-grid vitals">
+        <label><span>Peso (kg)</span><input type="number" step="0.1" name="weight" [(ngModel)]="vitals['weight_kg']"></label>
+        <label><span>Estatura (cm)</span><input type="number" step="0.1" name="height" [(ngModel)]="vitals['height_cm']"></label>
+        <label><span>Presión sistólica</span><input type="number" name="systolic" [(ngModel)]="vitals['systolic_pressure']"></label>
+        <label><span>Presión diastólica</span><input type="number" name="diastolic" [(ngModel)]="vitals['diastolic_pressure']"></label>
+        <label><span>Frecuencia cardiaca</span><input type="number" name="heart" [(ngModel)]="vitals['heart_rate']"></label>
+        <label><span>Temperatura °C</span><input type="number" step="0.1" name="temperature" [(ngModel)]="vitals['temperature_c']"></label>
+        <label><span>Frecuencia respiratoria</span><input type="number" name="respiratory" [(ngModel)]="vitals['respiratory_rate']"></label>
+        <label><span>Saturación O₂ (%)</span><input type="number" step="0.1" name="oxygen" [(ngModel)]="vitals['oxygen_saturation']"></label>
+      </div></fieldset>
+      <fieldset><legend>Nota clínica</legend><div class="form-grid">
+        <label class="wide"><span>Motivo de consulta *</span><input name="reason" [(ngModel)]="consultation.reason_for_visit"></label>
+        <label class="wide"><span>Interrogatorio y síntomas</span><textarea name="subjective" [(ngModel)]="consultation.subjective_notes"></textarea></label>
+        <label class="wide"><span>Exploración física</span><textarea name="exam" [(ngModel)]="consultation.physical_exam"></textarea></label>
+        <label class="wide"><span>Evaluación clínica</span><textarea name="assessment" [(ngModel)]="consultation.assessment"></textarea></label>
+        <label class="wide"><span>Diagnóstico *</span><textarea name="diagnosis" [(ngModel)]="consultation.diagnosis"></textarea></label>
+        <label class="wide"><span>Plan de tratamiento</span><textarea name="treatment" [(ngModel)]="consultation.treatment_plan"></textarea></label>
+        <label class="wide"><span>Receta e indicaciones</span><textarea name="prescriptions" [(ngModel)]="consultation.prescriptions"></textarea></label>
+        <label class="wide"><span>Seguimiento</span><textarea name="followup" [(ngModel)]="consultation.follow_up_notes"></textarea></label>
+      </div></fieldset>
+      <div class="form-actions"><button type="button" class="cancel" (click)="tab.set('summary')">Cancelar</button><button class="save" [disabled]="saving()">{{saving() ? 'Guardando…' : 'Guardar consulta'}}</button></div>
+    </form>
+  </main>
+</section>

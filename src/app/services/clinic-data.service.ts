@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from './auth.service';
-import { AppointmentInput, AppointmentRow, PatientInput, PatientRow } from '../models/database.models';
+import { AppointmentInput, AppointmentRow, ConsultationInput, MedicalRecordRow, PatientInput, PatientRow, VitalSignsInput, VitalSignsRow } from '../models/database.models';
 
 @Injectable({ providedIn: 'root' })
 export class ClinicDataService {
@@ -88,5 +88,66 @@ export class ClinicDataService {
       .eq('id', id);
 
     if (error) throw error;
+  }
+
+  async getMedicalHistory(patientId: string): Promise<MedicalRecordRow[]> {
+    const { data, error } = await this.auth.client
+      .from('medical_records')
+      .select('*')
+      .eq('patient_id', patientId)
+      .order('consultation_date', { ascending: false });
+
+    if (error) throw error;
+    return (data ?? []) as MedicalRecordRow[];
+  }
+
+  async getLatestVitalSigns(patientId: string): Promise<VitalSignsRow | null> {
+    const { data, error } = await this.auth.client
+      .from('vital_signs')
+      .select('*')
+      .eq('patient_id', patientId)
+      .order('measured_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data as VitalSignsRow | null;
+  }
+
+  async createConsultation(
+    patientId: string,
+    consultation: ConsultationInput,
+    vitals: VitalSignsInput
+  ): Promise<MedicalRecordRow> {
+    const userId = this.auth.user()?.id;
+    if (!userId) throw new Error('Sesión no disponible');
+
+    const { data: record, error: recordError } = await this.auth.client
+      .from('medical_records')
+      .insert({
+        patient_id: patientId,
+        ...consultation,
+        created_by: userId
+      })
+      .select()
+      .single();
+
+    if (recordError) throw recordError;
+
+    const hasVitals = Object.values(vitals).some(value => value !== null);
+    if (hasVitals) {
+      const { error: vitalsError } = await this.auth.client
+        .from('vital_signs')
+        .insert({
+          patient_id: patientId,
+          medical_record_id: record.id,
+          ...vitals,
+          created_by: userId
+        });
+
+      if (vitalsError) throw vitalsError;
+    }
+
+    return record as MedicalRecordRow;
   }
 }

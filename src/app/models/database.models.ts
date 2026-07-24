@@ -50,3 +50,55 @@ export interface AppointmentInput {
   status: string;
   administrative_notes: string | null;
 }
+
+export interface MedicalRecordRow {
+  id: string;
+  patient_id: string;
+  consultation_date: string;
+  reason_for_visit: string | null;
+  subjective_notes: string | null;
+  physical_exam: string | null;
+  assessment: string | null;
+  diagnosis: string | null;
+  treatment_plan: string | null;
+  prescriptions: string | null;
+  follow_up_notes: string | null;
+  created_at: string;
+}
+
+export interface VitalSignsRow {
+  id: string;
+  patient_id: string;
+  medical_record_id: string | null;
+  measured_at: string;
+  weight_kg: number | null;
+  height_cm: number | null;
+  systolic_pressure: number | null;
+  diastolic_pressure: number | null;
+  heart_rate: number | null;
+  respiratory_rate: number | null;
+  temperature_c: number | null;
+  oxygen_saturation: number | null;
+}
+
+export interface ConsultationInput {
+  reason_for_visit: string | null;
+  subjective_notes: string | null;
+  physical_exam: string | null;
+  assessment: string | null;
+  diagnosis: string | null;
+  treatment_plan: string | null;
+  prescriptions: string | null;
+  follow_up_notes: string | null;
+}
+
+export interface VitalSignsInput {
+  weight_kg: number | null;
+  height_cm: number | null;
+  systolic_pressure: number | null;
+  diastolic_pressure: number | null;
+  heart_rate: number | null;
+  respiratory_rate: number | null;
+  temperature_c: number | null;
+  oxygen_saturation: number | null;
+}
