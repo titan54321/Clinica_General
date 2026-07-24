@@ -1,0 +1,8 @@
+header { height:76px; background:#fff; border-bottom:1px solid #edf0f3; display:flex; align-items:center; gap:14px; padding:0 34px; box-sizing:border-box; position:sticky;top:0;z-index:10}
+.search { width:min(370px,38vw); height:38px;background:#f6f8fa;border:1px solid #edf0f2;border-radius:9px;display:flex;align-items:center;padding:0 12px;color:#8a9491}
+.search input{border:0;outline:0;background:transparent;flex:1;font:12px inherit;padding:0 9px}.search kbd{background:#fff;border:1px solid #e1e5e4;border-radius:5px;padding:3px 6px;font-size:9px;color:#9aa29f}
+.role-switch{margin-left:auto;background:#f2f5f4;padding:3px;border-radius:9px;display:flex}.role-switch button{border:0;background:transparent;border-radius:7px;padding:7px 11px;font:600 10px inherit;color:#82908b;cursor:pointer}.role-switch .active{background:white;color:#214a3d;box-shadow:0 1px 4px #1b39241a}
+.role-label{margin-left:auto;background:#eff5f2;color:#315d4f;border-radius:9px;padding:8px 12px;font-size:9px;font-weight:700}
+.bell,.menu{border:1px solid #e9edeb;background:#fff;border-radius:9px;height:37px;width:37px;color:#60706b;position:relative}.bell i{position:absolute;width:5px;height:5px;background:#bd6f59;border:2px solid white;border-radius:50%;top:6px;right:6px}
+.new{height:38px;border:0;border-radius:9px;background:#183f33;color:white;padding:0 16px;font:600 11px inherit;box-shadow:0 5px 13px #183f3326}.menu{display:none}
+@media(max-width:900px){header{padding:0 16px}.menu{display:block}.search{width:auto;flex:1}.role-switch{display:none}} @media(max-width:560px){.search kbd,.new span{display:none}.new{width:38px;padding:0}.bell{display:none}}

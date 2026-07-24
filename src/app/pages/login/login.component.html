@@ -1,0 +1,33 @@
+<main class="login-page">
+  <section class="brand-panel">
+    <div class="brand"><div class="mark">B</div><div><strong>Clínica Barri</strong><span>Gestión médica</span></div></div>
+    <div class="brand-copy">
+      <p>ATENCIÓN CLÍNICA, EN ORDEN</p>
+      <h1>La información correcta, en el momento indicado.</h1>
+      <span>Expedientes, agenda y seguimiento de programas clínicos en un solo espacio seguro.</span>
+    </div>
+    <div class="privacy"><i>✓</i><div><strong>Acceso protegido</strong><span>Solo personal autorizado de la clínica</span></div></div>
+    <small>© 2026 Clínica Barri · Privacidad y seguridad</small>
+  </section>
+
+  <section class="form-panel">
+    <div class="mobile-brand"><div class="mark">B</div><strong>Clínica Barri</strong></div>
+    <div class="form-card">
+      <p class="eyebrow">PORTAL DEL PERSONAL</p>
+      <h2>Bienvenido de nuevo</h2>
+      <span class="intro">Ingresa tus credenciales para acceder al sistema.</span>
+
+      <form (ngSubmit)="submit()">
+        <label>Correo electrónico</label>
+        <div class="field"><span>＠</span><input type="email" name="email" [(ngModel)]="email" autocomplete="email" placeholder="nombre@clinicabarri.mx" /></div>
+        <div class="password-label"><label>Contraseña</label><button type="button" (click)="recover()">¿Olvidaste tu contraseña?</button></div>
+        <div class="field"><span>⌑</span><input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="password" autocomplete="current-password" placeholder="Ingresa tu contraseña" /><button class="eye" type="button" (click)="showPassword = !showPassword">{{showPassword ? 'Ocultar' : 'Ver'}}</button></div>
+        <p class="error" *ngIf="error()">{{error()}}</p>
+        <p class="success" *ngIf="message()">{{message()}}</p>
+        <button class="submit" type="submit" [disabled]="busy()">{{busy() ? 'Verificando…' : 'Iniciar sesión'}}</button>
+      </form>
+
+      <div class="support">¿Problemas para ingresar? <a href="mailto:soporte@clinicabarri.mx">Contacta a soporte</a></div>
+    </div>
+  </section>
+</main>

@@ -1,0 +1,14 @@
+<div class="overlay" *ngIf="patient" (click)="closed.emit()"></div>
+<aside *ngIf="patient">
+  <button class="close" (click)="closed.emit()">×</button>
+  <p class="eyebrow">EXPEDIENTE CLÍNICO</p>
+  <div class="patient">
+    <div class="avatar" [style.background]="patient.color">{{patient.initials}}</div>
+    <div><h2>{{patient.name}}</h2><span>{{patient.id}} · {{patient.age}} años</span></div>
+  </div>
+  <div class="badges"><b>{{patient.program}}</b><span>{{patient.status}}</span></div>
+  <section><h3>Resumen de control</h3><div class="metric"><span>{{patient.detail}}</span><strong>{{patient.value}}</strong></div><div class="metric"><span>Última consulta</span><strong>{{patient.lastVisit}}</strong></div><div class="metric"><span>Próxima cita</span><strong>{{patient.nextVisit}}</strong></div></section>
+  <section><h3>Información clínica</h3><p>Sin alergias registradas</p><p>Tratamiento activo y adherencia en seguimiento.</p><p>Últimos signos vitales dentro del expediente.</p></section>
+  <button class="primary">Abrir expediente completo</button>
+  <button class="secondary">＋ Agregar nota médica</button>
+</aside>

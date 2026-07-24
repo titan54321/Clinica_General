@@ -1,0 +1,38 @@
+<section class="page">
+  <div class="welcome">
+    <div><p>GESTIÓN CLÍNICA</p><h1>{{ role === 'doctor' ? 'Buenos días, doctor' : 'Buenos días, recepción' }}</h1><span>{{ role === 'doctor' ? 'Este es el pulso de su consulta para hoy.' : 'Todo listo para coordinar la consulta de hoy.' }}</span></div>
+    <div class="date-nav"><button>‹</button><strong>Hoy</strong><button>›</button></div>
+  </div>
+  <div class="stats">
+    <article><div class="stat-icon green">▣</div><div><span>CITAS DE HOY</span><strong>{{appointments.length}}</strong><small>Registradas en agenda</small></div></article>
+    <article><div class="stat-icon rust">♙</div><div><span>PACIENTES ACTIVOS</span><strong>{{patients.length}}</strong><small>Expedientes disponibles</small></div></article>
+    <article><div class="stat-icon blue">⌁</div><div><span>CONTROL DIABETES</span><strong>—</strong><small>Siguiente módulo</small></div></article>
+    <article><div class="stat-icon violet">♡</div><div><span>CONTROL PRENATAL</span><strong>—</strong><small>Siguiente módulo</small></div></article>
+  </div>
+  <div class="data-alert error-alert" *ngIf="error()">{{error()}} <button (click)="loadData()">Reintentar</button></div>
+  <div class="layout">
+    <div class="left">
+      <article class="card schedule">
+        <div class="card-head"><div><h2>Agenda de hoy</h2><p>{{appointments.length}} citas registradas</p></div><button (click)="dialog.set('appointment')">＋ Agendar cita</button></div>
+        <div class="empty" *ngIf="!loading() && appointments.length === 0"><span>▣</span><strong>No hay citas para hoy</strong><p>La agenda está libre. Registra la primera cita del día.</p><button (click)="dialog.set('appointment')">Agendar cita</button></div>
+        <div class="appointment" *ngFor="let a of appointments">
+          <time>{{a.starts_at | date:'HH:mm'}}</time><div class="line"><i></i></div><div class="avatar">{{(a.patient?.first_name?.[0] || '') + (a.patient?.last_name?.[0] || '')}}</div>
+          <div class="appt-info"><strong>{{a.patient?.first_name}} {{a.patient?.last_name}}</strong><span>{{a.reason || 'Consulta programada'}}</span></div>
+          <span class="tag">{{appointmentLabel(a.appointment_type)}}</span><span class="status" [class.wait]="a.status === 'waiting'" [class.pending]="a.status === 'scheduled'"><i></i>{{statusLabel(a.status)}}</span><button class="dots">•••</button>
+        </div>
+      </article>
+      <article class="card patients">
+        <div class="card-head"><div><h2>Directorio de pacientes</h2><p>Expedientes administrativos registrados en Supabase</p></div><button (click)="dialog.set('patient')">＋ Nuevo paciente</button></div>
+        <div class="empty" *ngIf="!loading() && patients.length === 0"><span>♙</span><strong>Aún no hay pacientes</strong><p>Registra el primer expediente para comenzar.</p><button (click)="dialog.set('patient')">Registrar paciente</button></div>
+        <div class="table-wrap" *ngIf="patients.length"><table><thead><tr><th>PACIENTE</th><th>CONTACTO</th><th>NACIMIENTO</th><th>SANGRE</th><th>ESTADO</th><th></th></tr></thead>
+        <tbody><tr *ngFor="let p of patients"><td><div class="patient-cell"><div class="mini">{{initials(p)}}</div><div><strong>{{p.first_name}} {{p.last_name}}</strong><span>#{{p.record_number}} · {{age(p.birth_date)}} años</span></div></div></td><td><span>{{p.phone || 'Sin teléfono'}}</span><br><small>{{p.email || ''}}</small></td><td>{{p.birth_date | date:'dd MMM yyyy'}}</td><td><b class="indicator">{{p.blood_type || '—'}}</b></td><td><span class="program">{{p.status === 'active' ? 'Activo' : 'Inactivo'}}</span></td><td>›</td></tr></tbody></table></div>
+      </article>
+    </div>
+    <aside class="right">
+      <article class="card quick"><h2>Acciones rápidas</h2><button (click)="dialog.set('patient')"><span>＋</span><div><strong>Nuevo paciente</strong><small>Crear expediente administrativo</small></div><b>›</b></button><button (click)="dialog.set('appointment')"><span>▣</span><div><strong>Agendar cita</strong><small>Registrar nueva consulta</small></div><b>›</b></button><button *ngIf="role === 'doctor'"><span>▤</span><div><strong>Nota médica</strong><small>Próximo módulo</small></div><b>›</b></button></article>
+      <article class="card programs"><h2>Estado del sistema</h2><div class="prog-head"><span>Pacientes sincronizados</span><b>{{patients.length}}</b></div><div class="bar"><i [style.width]="patients.length ? '100%' : '0%'"></i></div><p>Información protegida por RLS</p><div class="divider"></div><div class="prog-head"><span>Citas de hoy</span><b>{{appointments.length}}</b></div><div class="bar prenatal"><i [style.width]="appointments.length ? '100%' : '0%'"></i></div><p>Agenda conectada en tiempo real</p></article>
+      <article class="note"><span>✦</span><div><strong>Datos en Supabase</strong><p>Las altas de pacientes y citas ya se guardan directamente en su base clínica.</p></div></article>
+    </aside>
+  </div>
+</section>
+<app-clinic-dialog [mode]="dialog()" [patients]="patients" (closed)="closeDialog()" (saved)="onSaved()" />

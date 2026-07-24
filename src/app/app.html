@@ -1,0 +1,27 @@
+<div class="loading-screen" *ngIf="auth.loading()">
+  <div class="loading-mark">B</div>
+  <span>Preparando tu espacio clínico…</span>
+</div>
+
+<app-login *ngIf="!auth.loading() && !auth.user()" />
+
+<div class="app-shell" *ngIf="!auth.loading() && auth.user()">
+  <app-sidebar
+    [role]="role"
+    [open]="sidebarOpen()"
+    (closeMenu)="sidebarOpen.set(false)"
+    (logout)="auth.signOut()"
+  />
+  <main class="main">
+    <app-topbar
+      [role]="role"
+      (menuClick)="sidebarOpen.set(true)"
+      (createClick)="requestedAction.set($event)"
+    />
+    <app-dashboard
+      [role]="role"
+      [requestedAction]="requestedAction()"
+      (actionHandled)="requestedAction.set(null)"
+    />
+  </main>
+</div>

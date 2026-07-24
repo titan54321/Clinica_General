@@ -1,0 +1,31 @@
+<div class="backdrop" [class.visible]="open" (click)="closeMenu.emit()"></div>
+<aside [class.open]="open">
+  <div class="brand">
+    <div class="mark">B</div>
+    <div><strong>Clínica Barri</strong><span>Gestión médica</span></div>
+  </div>
+  <div class="workspace">ESPACIO DE TRABAJO</div>
+  <nav>
+    <button class="active"><span>⌂</span> Resumen</button>
+    <button><span>▣</span> Agenda <b>4</b></button>
+    <button><span>♙</span> Pacientes</button>
+    <button><span>▤</span> Expedientes</button>
+    <small>PROGRAMAS</small>
+    <button><i class="dot diabetes"></i> Control de diabetes</button>
+    <button><i class="dot prenatal"></i> Control prenatal</button>
+    <button><i class="dot general"></i> Consulta general</button>
+    <small>ADMINISTRACIÓN</small>
+    <button *ngIf="role === 'doctor'"><span>◎</span> Reportes</button>
+    <button><span>⚙</span> Configuración</button>
+  </nav>
+  <div class="help">
+    <div class="help-icon">?</div>
+    <strong>¿Necesitas ayuda?</strong>
+    <span>Consulta la guía del sistema</span>
+  </div>
+  <div class="profile">
+    <div class="avatar">{{ role === 'doctor' ? 'AB' : 'LM' }}</div>
+    <div><strong>{{ role === 'doctor' ? 'Dr. Alejandro Barri' : 'Laura Méndez' }}</strong><span>{{ role === 'doctor' ? 'Medicina familiar' : 'Recepción' }}</span></div>
+    <button class="logout" title="Cerrar sesión" (click)="logout.emit()">↪</button>
+  </div>
+</aside>
