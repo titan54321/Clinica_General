@@ -20,6 +20,7 @@ export class AuthService {
 
   readonly user = signal<User | null>(null);
   readonly loading = signal(true);
+  readonly clinicRole = signal<ClinicRole>('recepcion');
 
   constructor() {
     this.client.auth.getSession().then(({ data }) => {
@@ -34,8 +35,7 @@ export class AuthService {
   }
 
   get role(): ClinicRole {
-    const role = this.user()?.app_metadata?.['role'] ?? this.user()?.user_metadata?.['role'];
-    return role === 'recepcion' ? 'recepcion' : 'doctor';
+    return this.clinicRole();
   }
 
   get displayName(): string {
@@ -62,5 +62,25 @@ export class AuthService {
 
   private applySession(session: Session | null) {
     this.user.set(session?.user ?? null);
+    if (!session?.user) {
+      this.clinicRole.set('recepcion');
+      return;
+    }
+
+    const protectedRole = session.user.app_metadata?.['role'];
+    if (protectedRole === 'doctor' || protectedRole === 'recepcion') {
+      this.clinicRole.set(protectedRole);
+      return;
+    }
+
+    // Compatibilidad con instalaciones que guardaron el rol en public.profiles.
+    this.client
+      .from('profiles')
+      .select('role')
+      .eq('id', session.user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        this.clinicRole.set(data?.role === 'doctor' ? 'doctor' : 'recepcion');
+      });
   }
 }

@@ -8,13 +8,30 @@ create extension if not exists pgcrypto;
 -- Devuelve el rol protegido almacenado en auth.users.app_metadata.
 create or replace function public.current_user_role()
 returns text
-language sql
+language plpgsql
 stable
 security definer
 set search_path = public
 as $$
-  select coalesce(auth.jwt() -> 'app_metadata' ->> 'role', '');
+declare
+  jwt_role text;
+  profile_role text;
+begin
+  jwt_role := auth.jwt() -> 'app_metadata' ->> 'role';
+
+  if jwt_role in ('doctor', 'recepcion') then
+    return jwt_role;
+  end if;
+
+  select role into profile_role
+  from public.profiles
+  where id = auth.uid();
+
+  return coalesce(profile_role, '');
+end;
 $$;
+
+grant execute on function public.current_user_role() to authenticated;
 
 -- Información administrativa visible para doctor y recepción.
 create table if not exists public.patients (
