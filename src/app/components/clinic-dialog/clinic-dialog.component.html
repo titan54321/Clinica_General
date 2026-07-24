@@ -1,7 +1,7 @@
 <div class="overlay" *ngIf="mode" (click)="closed.emit()"></div>
 <section class="dialog" *ngIf="mode">
   <div class="head">
-    <div><p>{{mode === 'patient' ? 'EXPEDIENTE ADMINISTRATIVO' : 'AGENDA CLÍNICA'}}</p><h2>{{mode === 'patient' ? 'Registrar paciente' : 'Agendar nueva cita'}}</h2></div>
+    <div><p>{{mode === 'patient' ? 'EXPEDIENTE ADMINISTRATIVO' : mode === 'consultation' ? 'ATENCIÓN MÉDICA' : 'AGENDA CLÍNICA'}}</p><h2>{{mode === 'patient' ? 'Registrar paciente' : mode === 'consultation' ? 'Iniciar nueva consulta' : 'Agendar nueva cita'}}</h2></div>
     <button type="button" (click)="closed.emit()">×</button>
   </div>
 
@@ -20,6 +20,17 @@
     </div>
     <p class="error" *ngIf="error()">{{error()}}</p>
     <div class="actions"><button type="button" class="cancel" (click)="closed.emit()">Cancelar</button><button class="save" [disabled]="busy()">{{busy() ? 'Guardando…' : 'Registrar paciente'}}</button></div>
+  </form>
+
+  <form *ngIf="mode === 'consultation'" (ngSubmit)="selectConsultationPatient()">
+    <div class="consultation-picker">
+      <div class="picker-icon">▤</div>
+      <h3>Selecciona al paciente</h3>
+      <p>Se abrirá su expediente directamente en una nueva nota médica.</p>
+      <label><span>Paciente *</span><select name="consultation_patient_id" [(ngModel)]="appointment.patient_id"><option value="">Seleccionar paciente</option><option *ngFor="let p of patients" [value]="p.id">{{p.last_name}}, {{p.first_name}} · Expediente #{{p.record_number}}</option></select></label>
+    </div>
+    <p class="error" *ngIf="error()">{{error()}}</p>
+    <div class="actions"><button type="button" class="cancel" (click)="closed.emit()">Cancelar</button><button class="save">Continuar a consulta →</button></div>
   </form>
 
   <form *ngIf="mode === 'appointment'" (ngSubmit)="submitAppointment()">

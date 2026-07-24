@@ -10,5 +10,5 @@ export class TopbarComponent {
   @Input() role: 'doctor' | 'recepcion' = 'doctor';
   @Output() roleChange = new EventEmitter<'doctor' | 'recepcion'>();
   @Output() menuClick = new EventEmitter<void>();
-  @Output() createClick = new EventEmitter<'appointment'>();
+  @Output() createClick = new EventEmitter<'appointment' | 'consultation'>();
 }

@@ -1,0 +1,33 @@
+.consultation-picker {
+  padding: 14px 8px 4px;
+  text-align: center;
+}
+
+.picker-icon {
+  display: grid;
+  width: 43px;
+  height: 43px;
+  margin: 0 auto 11px;
+  place-items: center;
+  border-radius: 12px;
+  background: #edf4f1;
+  color: #386656;
+  font-size: 18px;
+}
+
+.consultation-picker h3 {
+  margin: 0 0 7px;
+  color: #31483f;
+  font: 600 16px Georgia;
+}
+
+.consultation-picker p {
+  margin: 0 0 22px;
+  color: #8c9692;
+  font-size: 9px;
+}
+
+.consultation-picker label {
+  display: block;
+  text-align: left;
+}

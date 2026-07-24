@@ -3,5 +3,5 @@
   <div class="search"><span>⌕</span><input placeholder="Buscar paciente, expediente..." /><kbd>⌘ K</kbd></div>
   <div class="role-label">{{ role === 'doctor' ? 'Vista médica' : 'Vista de recepción' }}</div>
   <button class="bell">♢<i></i></button>
-  <button class="new" (click)="createClick.emit('appointment')">＋ <span>Nueva cita</span></button>
+  <button class="new" (click)="createClick.emit(role === 'doctor' ? 'consultation' : 'appointment')">＋ <span>{{role === 'doctor' ? 'Nueva consulta' : 'Nueva cita'}}</span></button>
 </header>

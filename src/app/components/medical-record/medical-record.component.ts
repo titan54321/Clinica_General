@@ -13,6 +13,7 @@ import { ClinicDataService } from '../../services/clinic-data.service';
 })
 export class MedicalRecordComponent implements OnChanges {
   @Input() patient: PatientRow | null = null;
+  @Input() startInConsultation = false;
   @Output() closed = new EventEmitter<void>();
   @Output() updated = new EventEmitter<void>();
 
@@ -51,7 +52,7 @@ export class MedicalRecordComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['patient']?.currentValue) {
-      this.tab.set('summary');
+      this.tab.set(this.startInConsultation ? 'consultation' : 'summary');
       this.loadHistory();
     }
   }

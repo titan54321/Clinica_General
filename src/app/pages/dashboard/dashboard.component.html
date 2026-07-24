@@ -35,5 +35,5 @@
     </aside>
   </div>
 </section>
-<app-clinic-dialog [mode]="dialog()" [patients]="patients" (closed)="closeDialog()" (saved)="onSaved()" />
-<app-medical-record *ngIf="role === 'doctor'" [patient]="selectedPatient()" (closed)="selectedPatient.set(null)" />
+<app-clinic-dialog [mode]="dialog()" [patients]="patients" (closed)="closeDialog()" (saved)="onSaved()" (patientSelected)="beginConsultation($event)" />
+<app-medical-record *ngIf="role === 'doctor'" [patient]="selectedPatient()" [startInConsultation]="startInConsultation()" (closed)="closeMedicalRecord()" />

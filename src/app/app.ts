@@ -14,7 +14,7 @@ import { AuthService, ClinicRole } from './services/auth.service';
 })
 export class App {
   sidebarOpen = signal(false);
-  requestedAction = signal<'patient' | 'appointment' | null>(null);
+  requestedAction = signal<'patient' | 'appointment' | 'consultation' | null>(null);
 
   constructor(readonly auth: AuthService) {}
 

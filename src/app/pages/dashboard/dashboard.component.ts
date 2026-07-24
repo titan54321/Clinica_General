@@ -14,13 +14,14 @@ import { AppointmentRow, PatientRow } from '../../models/database.models';
 })
 export class DashboardComponent implements OnInit, OnChanges {
   @Input() role: 'doctor' | 'recepcion' = 'doctor';
-  @Input() requestedAction: 'patient' | 'appointment' | null = null;
+  @Input() requestedAction: 'patient' | 'appointment' | 'consultation' | null = null;
   @Output() actionHandled = new EventEmitter<void>();
 
   patients: PatientRow[] = [];
   appointments: AppointmentRow[] = [];
-  dialog = signal<'patient' | 'appointment' | null>(null);
+  dialog = signal<'patient' | 'appointment' | 'consultation' | null>(null);
   selectedPatient = signal<PatientRow | null>(null);
+  startInConsultation = signal(false);
   loading = signal(true);
   error = signal('');
 
@@ -62,7 +63,22 @@ export class DashboardComponent implements OnInit, OnChanges {
   }
 
   openPatient(patient: PatientRow) {
-    if (this.role === 'doctor') this.selectedPatient.set(patient);
+    if (this.role === 'doctor') {
+      this.startInConsultation.set(false);
+      this.selectedPatient.set(patient);
+    }
+  }
+
+  beginConsultation(patient: PatientRow) {
+    this.dialog.set(null);
+    this.actionHandled.emit();
+    this.startInConsultation.set(true);
+    this.selectedPatient.set(patient);
+  }
+
+  closeMedicalRecord() {
+    this.selectedPatient.set(null);
+    this.startInConsultation.set(false);
   }
 
   age(birthDate: string): number {

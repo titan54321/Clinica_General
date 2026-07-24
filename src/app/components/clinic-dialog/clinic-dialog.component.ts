@@ -9,13 +9,14 @@ import { PatientRow } from '../../models/database.models';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './clinic-dialog.component.html',
-  styleUrl: './clinic-dialog.component.scss'
+  styleUrls: ['./clinic-dialog.component.scss', './clinic-dialog-extra.scss']
 })
 export class ClinicDialogComponent {
-  @Input() mode: 'patient' | 'appointment' | null = null;
+  @Input() mode: 'patient' | 'appointment' | 'consultation' | null = null;
   @Input() patients: PatientRow[] = [];
   @Output() closed = new EventEmitter<void>();
   @Output() saved = new EventEmitter<void>();
+  @Output() patientSelected = new EventEmitter<PatientRow>();
 
   busy = signal(false);
   error = signal('');
@@ -44,6 +45,15 @@ export class ClinicDialogComponent {
   };
 
   constructor(private clinic: ClinicDataService) {}
+
+  selectConsultationPatient() {
+    const patient = this.patients.find(item => item.id === this.appointment.patient_id);
+    if (!patient) {
+      this.error.set('Selecciona un paciente para iniciar la consulta.');
+      return;
+    }
+    this.patientSelected.emit(patient);
+  }
 
   async submitPatient() {
     if (!this.patient.first_name.trim() || !this.patient.last_name.trim() || !this.patient.birth_date) {
