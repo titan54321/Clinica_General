@@ -1,0 +1,1 @@
+function s(t){let n=t instanceof Date?t:t.includes("T")?new Date(t):new Date(`2000-01-01T${t}:00`);if(Number.isNaN(n.getTime()))return"";let e=n.getHours(),r=String(n.getMinutes()).padStart(2,"0"),i=e>=12?"p. m.":"a. m.";return e=e%12||12,`${e}:${r} ${i}`}export{s as a};
